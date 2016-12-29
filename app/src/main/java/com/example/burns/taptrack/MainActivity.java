@@ -14,28 +14,33 @@ import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
 public class MainActivity extends AppCompatActivity {
     SQLiteDatabase tapTrackDatabase;
-    String tableName = "tracks";
+    String tableName = "FAKE";
     //@Override
 
     public void connect_to_db(){
 
-        System.out.println(android.os.Environment.getDataDirectory().getPath()+"taptrackdbfile.db");
-        tapTrackDatabase = SQLiteDatabase.openOrCreateDatabase(android.os.Environment.getDataDirectory().getPath()+"taptrackdbfile.db", null); //opens or creates the db
+       // System.out.println(android.os.Environment.getDataDirectory().getPath()+"taptrackdbfile.db");
+        System.out.println(tableName);
+        System.out.println(this.getFilesDir().getPath()+File.separator+"taptrackdbfile.db");
+        tapTrackDatabase = SQLiteDatabase.openOrCreateDatabase(this.getFilesDir().getPath()+File.separator+"taptrackdbfile.db", null); //opens or creates the db
         Cursor taptrackcursor  = tapTrackDatabase.rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '"+tableName+"'", null);
         if(taptrackcursor!=null||taptrackcursor.getCount()==0){
             // create all tables, including
             // track: lists all events
             // track_types: lists all types of tracks
-            String sqlString = "CREATE TABLE FAKE(" +
-                    "   ID INT PRIMARY KEY AUTOINCREMENT      NOT NULL," +
-                    "   ButtonName           CHAR(50) NOT NULL," +
+            String sqlString = "CREATE TABLE IF NOT EXISTS FAKE (" +
+                    "ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                    "ButtonName CHAR(50) NOT NULL" +
                     ")";
+            System.out.println(sqlString);
+            taptrackcursor = tapTrackDatabase.rawQuery(sqlString , null);
+            System.out.println(taptrackcursor.getCount());
+            sqlString = "INSERT INTO FAKE (ButtonName) " +
+                    "VALUES ('red')";
+            System.out.println(sqlString);
             taptrackcursor = tapTrackDatabase.rawQuery(sqlString , null);
             sqlString = "INSERT INTO FAKE (ButtonName)  " +
-                    "VALUES (red);";
-            taptrackcursor = tapTrackDatabase.rawQuery(sqlString , null);
-            sqlString = "INSERT INTO FAKE (ButtonName)  " +
-                    "VALUES (blue);";
+                    "VALUES ('blue');";
             taptrackcursor = tapTrackDatabase.rawQuery(sqlString , null);
         }
                 //classnames are always in caps
@@ -50,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         //call create database if it doesn't
         //check if database needs an update
         //connect to the database
-        connect_to_db();
+         this.connect_to_db();
 
         }
 
